@@ -1,34 +1,13 @@
-import { useReducer } from "react";
 import "./App.css";
-import Bird from "./components/Bird";
+import GameCanvas from "./components/GameCanvas";
+import { useGame } from "./context/GameContext";
 
-const initialState = { status: "start", score: 0 };
-function gameReducer(state, action) {
-  switch (action.type) {
-    case "start_game":
-      return { ...state, status: "playing", score: 0 };
-    case "game_over":
-      return {
-        ...state,
-        status: "gameOver",
-      };
-    case "restart":
-      return { ...state, status: "start", score: 0 };
-    case "increment_score":
-      return {
-        ...state,
-        score: state.score + 1,
-      };
-    default:
-      return state;
-  }
-}
 function App() {
-  const [state, dispatch] = useReducer(gameReducer, initialState);
+  const { state, dispatch } = useGame(); // using the context to get the game state and dispatch function
   return (
     <div className="flex justify-center items-center mx-auto">
       <div className="back-ground flex items-center">
-        <Bird status={state.status} dispatch={dispatch} />
+        <GameCanvas />
         {state.status === "start" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 text-white">
             <h1 className="text-4xl font-bold mb-4 drop-shadow-lg">
@@ -47,6 +26,7 @@ function App() {
         {state.status === "gameOver" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-white">
             <h1 className="text-4xl font-bold mb-4">GAME OVER</h1>
+            <p className="text-2xl mb-6">Your Score is: {state.score}</p>
             <button
               className="px-6 py-2 bg-red-500 rounded-lg font-bold"
               onClick={() => dispatch({ type: "restart" })}
